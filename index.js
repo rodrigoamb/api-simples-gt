@@ -41,6 +41,18 @@ app.get("/clientes", async (req, res) => {
   res.json(result.rows);
 });
 
+app.get("/clientes/:id", async (req, res) => {
+  const id = req.params.id;
+
+  const result = await client.query("SELECT * FROM clientes WHERE id = $1", [
+    id,
+  ]);
+
+  const meuObjeto = result.rows[0];
+
+  res.status(200).json(meuObjeto);
+});
+
 app.post("/clientes", async (req, res) => {
   const { nome, email, telefone } = req.body;
 
