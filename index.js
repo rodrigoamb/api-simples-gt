@@ -32,3 +32,17 @@ client
   .catch((error) => {
     console.error("Erro ao conectar com o banco", error);
   });
+
+app.get("/clientes", async (req, res) => {
+  res.json({
+    id: 1,
+    marca: "Nike",
+    modelo: "Nike Air 2022",
+  });
+});
+
+//---- iniciando servidor
+
+app.listen(3000, () => {
+  console.log("Servidor API rodando na porta 3000");
+});
