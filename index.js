@@ -3,6 +3,8 @@ const { Client } = require("pg");
 
 const app = express();
 
+app.use(express.json()); // diz para o express que estamos usando JSON
+
 const client = new Client({
   user: "postgres",
   host: "localhost",
@@ -34,11 +36,24 @@ client
   });
 
 app.get("/clientes", async (req, res) => {
-  res.json({
-    id: 1,
-    marca: "Nike",
-    modelo: "Nike Air 2022",
-  });
+  const result = await client.query("SELECT * FROM clientes");
+
+  res.json(result.rows);
+});
+
+app.post("/clientes", async (req, res) => {
+  const { nome, email, telefone } = req.body;
+
+  if (!nome || !email) {
+    res.status(404).json({ message: "Deve ser enviado um nome e um email" });
+  }
+
+  await client.query(
+    "INSERT INTO clientes (nome, email, telefone) VALUES ($1, $2, $3)",
+    [nome, email, telefone]
+  );
+
+  res.status(201).json({ message: "Cliente criado com sucesso!" });
 });
 
 //---- iniciando servidor
