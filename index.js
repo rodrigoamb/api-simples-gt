@@ -35,12 +35,16 @@ client
     console.error("Erro ao conectar com o banco", error);
   });
 
+// ----- ENTIDADE CLIENTES --------
+
+// ROTA GET - CLIENTES - TRAZ TODOS OS CLIENTES
 app.get("/clientes", async (req, res) => {
   const result = await client.query("SELECT * FROM clientes");
 
   res.json(result.rows);
 });
 
+//ROTA GET - CLIENTES - TRAZ O CLIENTE FILTRADO PELO ID
 app.get("/clientes/:id", async (req, res) => {
   const id = req.params.id;
 
@@ -53,6 +57,7 @@ app.get("/clientes/:id", async (req, res) => {
   res.status(200).json(meuObjeto);
 });
 
+// ROTA POST - CLIENTES - CRIA UM NOVO CLIENTE
 app.post("/clientes", async (req, res) => {
   const { nome, email, telefone } = req.body;
 
@@ -66,6 +71,28 @@ app.post("/clientes", async (req, res) => {
   );
 
   res.status(201).json({ message: "Cliente criado com sucesso!" });
+});
+
+// ROTA PUT - CLIENTES - ATUALIZA OS DADOS DO CLIENTE POR ID
+app.put("/clientes/:id", async (req, res) => {
+  const { nome, email, telefone } = req.body;
+  const id = req.params.id;
+
+  await client.query(
+    "UPDATE clientes SET nome = $1 , email = $2 , telefone = $3 WHERE id = $4",
+    [nome, email, telefone, id]
+  );
+
+  res.status(200).json({ message: "Cliente atualizado com sucesso." });
+});
+
+// ROTA DELETE - CLIENTES - DELETA UM CLIENTE POR ID
+app.delete("/clientes/:id", async (req, res) => {
+  const id = req.params.id;
+
+  await client.query("DELETE FROM clientes WHERE id = $1", [id]);
+
+  res.status(200).json({ message: "Cliente deletado com sucesso." });
 });
 
 //---- iniciando servidor
